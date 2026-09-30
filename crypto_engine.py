@@ -66,10 +66,23 @@ def get_key_schedule(key):
 # ===== KEY SCHEDULE (Pana) END =====
 
 def calculate_brute_force(keys_per_second):
-    '''
-    Abby's workspace (Security Feature)
-    Expected Input: integer (keys per second guessed by attacker)
-    Expected Output: string (time to crack)
-    '''
-    # TODO: Implement 2^56 math calculation here
-    return "10 minutes" # (dummy output for now)
+    total_keys = 2 ** 56
+    seconds = total_keys / keys_per_second
+
+    years = seconds / (365 * 24 * 60 * 60)
+    if years >= 1:
+        return f"{years:,.2f} years"
+
+    days = seconds / (24 * 60 * 60)
+    if days >= 1:
+        return f"{days:,.2f} days"
+
+    hours = seconds / (60 * 60)
+    if hours >= 1:
+        return f"{hours:,.2f} hours"
+
+    minutes = seconds / 60
+    if minutes >= 1:
+        return f"{minutes:,.2f} minutes"
+
+    return f"{seconds:,.2f} seconds"
