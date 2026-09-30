@@ -55,12 +55,15 @@ def get_key_schedule(key):
     return {
         "original_64": original_64,
         "pc_1": pc_1,
-        "c0_d0": {"c0": c[0], "d0": d[0]},
+        # Combine C0 and D0 into a single readable string for the UI
+        "c0_d0": f"{c[0]}  (C0)\n{d[0]}  (D0)", 
         "c": c,
         "d": d,
         "shifts": list(_KS_SHIFTS),
-        "round_keys": round_keys,
-        "round_keys_hex": [format(int(k, 2), "012X") for k in round_keys],
+        # Pass the nicely formatted HEX keys to the variable the UI is looking for
+        "round_keys": [format(int(k, 2), "012X") for k in round_keys], 
+        # (Optional) Keep the binary version under a different name if needed for debugging
+        "round_keys_binary": round_keys, 
     }
 # ===== KEY SCHEDULE (Pana) END =====
 
