@@ -44,7 +44,7 @@ def api_encrypt():
     if error_msg:
         return jsonify({"error": error_msg}), 400
 
-    # Hand off to Crypto Dev 1
+    # Hand off to Crypto Dev 1 (Kemal)
     ciphertext = crypto_engine.des_encrypt(plaintext, key)
     
     return jsonify({
@@ -63,7 +63,7 @@ def api_decrypt():
     if error_msg:
         return jsonify({"error": error_msg}), 400
 
-    # Hand off to Crypto Dev 1
+    # Hand off to Crypto Dev 1 (Kemal)
     plaintext = crypto_engine.des_decrypt(ciphertext, key)
     
     return jsonify({
@@ -79,7 +79,7 @@ def api_key_schedule():
     if len(key) != 16 or not is_valid_hex(key):
         return jsonify({"error": "❌ Error: Invalid key format."}), 400
 
-    # Hand off to Crypto Dev 2
+    # Hand off to Crypto Dev 2 (Pana)
     schedule_data = crypto_engine.get_key_schedule(key)
     
     return jsonify(schedule_data)
@@ -92,7 +92,7 @@ def api_security():
     if not str(speed).isdigit() or int(speed) <= 0:
         return jsonify({"error": "❌ Error: Please enter a valid number."}), 400
 
-    # Hand off to Crypto Dev 3
+    # Hand off to Crypto Dev 3 (Abby)
     result = crypto_engine.calculate_brute_force(int(speed))
     
     return jsonify({"time_to_crack": result})
