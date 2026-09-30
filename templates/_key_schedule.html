@@ -1,0 +1,57 @@
+  <section id="key-schedule" class="ks">
+    <h2>DES Key Schedule</h2>
+    <p class="lead">Enter a 64-bit DES key and follow how it becomes the sixteen 48-bit round keys, K1 to K16.</p>
+
+    <div class="ks-form">
+      <label for="ks-input">DES key (16 hex characters)</label>
+      <div class="ks-row">
+        <input id="ks-input" type="text" inputmode="text" autocomplete="off" spellcheck="false"
+               maxlength="23" placeholder="e.g. 133457799BBCDFF1" aria-describedby="ks-error">
+        <button id="ks-generate" type="button" class="primary">Generate key schedule</button>
+        <button id="ks-sample" type="button">Use standard test key</button>
+      </div>
+      <p id="ks-error" class="error" role="alert" hidden></p>
+    </div>
+
+    <div id="ks-stage" hidden>
+      <ol class="flow">
+        <li>
+          <h3>64-bit key</h3>
+          <p class="bits" id="ks-key64"></p>
+          <p class="note">Hex <code id="ks-key64-hex"></code>. The <i class="parity">amber</i> bit at the end of each byte is a parity bit; PC-1 discards them.</p>
+        </li>
+        <li class="arrow" aria-hidden="true">↓ PC-1 (drop 8 parity bits, permute)</li>
+        <li>
+          <h3>56-bit key</h3>
+          <p class="bits" id="ks-key56"></p>
+        </li>
+        <li class="arrow" aria-hidden="true">↓ split into two 28-bit halves</li>
+        <li class="halves">
+          <div><h3>C0</h3><p class="bits" id="ks-c0"></p></div>
+          <div><h3>D0</h3><p class="bits" id="ks-d0"></p></div>
+        </li>
+        <li class="arrow" aria-hidden="true">↓ left circular shifts (1 or 2 bits per round), then PC-2 (56 → 48 bits)</li>
+      </ol>
+
+      <div class="controls">
+        <button id="ks-prev" type="button">Previous round</button>
+        <button id="ks-next" type="button" class="primary">Next round</button>
+        <button id="ks-all" type="button">Show all 16</button>
+        <button id="ks-reset" type="button">Reset</button>
+        <span id="ks-progress" class="progress" aria-live="polite"></span>
+      </div>
+
+      <div class="scroll">
+        <table>
+          <thead>
+            <tr><th>Round</th><th>Shift</th><th>Cn (28 bits)</th><th>Dn (28 bits)</th><th>PC-2 → Kn (48 bits)</th><th>Kn hex</th></tr>
+          </thead>
+          <tbody id="ks-rounds"></tbody>
+        </table>
+      </div>
+      <p class="note">The <i class="wrap">teal</i> bits are the ones rotated from the front to the back in that round.</p>
+
+      <h3>Round keys</h3>
+      <ul id="ks-keys" class="keys"></ul>
+    </div>
+  </section>
