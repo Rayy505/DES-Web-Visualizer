@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DES // Toolkit</title>
+<style>
+  :root{
+    --paper:#F6F3EA;
+    --paper-raised:#EDE8D8;
+    --ink:#1B1A16;
+    --ink-soft:#6B6759;
+    --line:#1B1A16;
+    --line-soft:#C9C2AC;
+    --signal:#B7291F;
+    --signal-bg:#F1E1DD;
+    --ok:#2E5C3E;
+    --mono: 'IBM Plex Mono', 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    font-family:var(--sans);
+    color:var(--ink);
+    background:var(--paper);
+    -webkit-font-smoothing:antialiased;
+    background-image:
+      linear-gradient(var(--paper) 0%, var(--paper) 100%);
+  }
+  a{ color:inherit; }
+  ::selection{ background:var(--ink); color:var(--paper); }
+
+  .wrap{ max-width:960px; margin:0 auto; padding:0 32px; }
+
+  /* sprocket divider */
+  .sprocket{
+    border:none;
+    border-top:1px dashed var(--line-soft);
+    margin:0;
+    height:1px;
+    background:
+      repeating-linear-gradient(to right, transparent 0 10px, var(--paper) 10px 10px);
+  }
+
+  /* ---------- header ---------- */
+  header.site{
+    border-bottom:2px solid var(--line);
+    padding:18px 0;
+  }
+  .site-nav{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:14px;
+  }
+  .brand{
+    font-family:var(--mono);
+    font-weight:700;
+    font-size:1rem;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    cursor:pointer;
+    background:none;
+    border:none;
+    color:var(--ink);
+    padding:0;
+  }
+  .brand::after{ content:" //"; color:var(--signal); }
+  .tabs{ display:flex; gap:2px; flex-wrap:wrap; }
+  .tab-btn{
+    font-family:var(--mono);
+    font-size:0.72rem;
+    letter-spacing:0.04em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    background:none;
+    border:none;
+    padding:8px 12px;
+    cursor:pointer;
+  }
+  .tab-btn:hover{ color:var(--ink); }
+  .tab-btn.active{ color:var(--paper); background:var(--ink); }
+
+  main{ padding:0 0 96px; }
+
+  /* ---------- inner page heading ---------- */
+  .page-head{ padding:48px 0 40px; text-align:center; }
+  .page-head .tag{
+    font-family:var(--mono);
+    font-size:0.7rem;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--signal);
+    margin:0 0 10px;
+  }
+  .page-head h1{
+    font-family:var(--mono);
+    font-weight:700;
+    font-size:2.4rem;
+    letter-spacing:-0.01em;
+    margin:0 0 10px;
+    text-transform:uppercase;
+  }
+  .page-head p{
+    font-family:var(--sans);
+    color:var(--ink-soft);
+    font-size:0.95rem;
+    margin:0 auto;
+    max-width:480px;
+  }
+
+  /* ---------- landing ---------- */
+  .hero{
+    position:relative;
+    padding:72px 0 40px;
+    overflow:hidden;
+    text-align:center;
+  }
+  .hero .binary-strip{
+    font-family:var(--mono);
+    font-size:0.72rem;
+    letter-spacing:0.12em;
+    color:var(--line-soft);
+    white-space:nowrap;
+    margin:0 0 22px;
+    user-select:none;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .hero h1{
+    font-family:var(--mono);
+    font-weight:700;
+    font-size:2.75rem;
+    letter-spacing:-0.01em;
+    line-height:1.12;
+    margin:0 0 18px;
+    text-transform:uppercase;
+  }
+  .hero p.sub{
+    font-family:var(--sans);
+    color:var(--ink-soft);
+    font-size:1.02rem;
+    max-width:520px;
+    margin:0 auto 40px;
+    line-height:1.6;
+  }
+
+  .nav-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:1px;
+    background:var(--line);
+    border:1px solid var(--line);
+    max-width:820px;
+    margin:0 auto;
+  }
+  .nav-card{
+    background:var(--paper-raised);
+    border:none;
+    padding:26px 16px;
+    cursor:pointer;
+    text-align:center;
+    font-family:inherit;
+    color:var(--ink);
+  }
+  .nav-card:hover{ background:var(--paper); }
+  .nav-card .num{
+    display:block;
+    font-family:var(--mono);
+    font-size:0.7rem;
+    color:var(--signal);
+    margin-bottom:10px;
+  }
+  .nav-card .title{
+    display:block;
+    font-family:var(--mono);
+    font-weight:700;
+    font-size:0.95rem;
+    text-transform:uppercase;
+    letter-spacing:0.01em;
+  }
+  .nav-card .desc{
+    display:block;
+    font-family:var(--sans);
+    font-weight:400;
+    font-size:0.76rem;
+    color:var(--ink-soft);
+    margin-top:8px;
+    line-height:1.45;
+  }
+
+  .fact-box{
+    margin:48px auto 0;
+    max-width:760px;
+    text-align:left;
+    border:1px solid var(--line);
+    background:var(--paper-raised);
+    padding:22px 26px;
+    font-size:0.88rem;
+    line-height:1.7;
+    color:var(--ink-soft);
+    font-family:var(--sans);
+  }
+  .fact-box .fact-tag{
+    display:block;
+    font-family:var(--mono);
+    font-size:0.68rem;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--signal);
+    margin-bottom:8px;
+  }
+  .fact-box strong{ color:var(--ink); }
+
+  /* ---------- two panel layout ---------- */
+  .panels{ display:grid; grid-template-columns:1fr 1fr; gap:0; border-top:2px solid var(--line); }
+  .panel{
+    border-right:1px solid var(--line);
+    border-bottom:1px solid var(--line);
+    padding:28px;
+    display:flex;
+    flex-direction:column;
+    min-height:420px;
+  }
+  .panel:last-child{ border-right:none; }
+  .panel h2{
+    font-family:var(--mono);
+    font-size:0.7rem;
+    letter-spacing:0.1em;
+    color:var(--ink-soft);
+    margin:0 0 18px;
+    font-weight:700;
+  }
+  .panel h2::before{ content:"\2014  "; color:var(--line-soft); }
+  .panel .blurb{
+    font-family:var(--sans);
+    font-size:0.85rem;
+    color:var(--ink-soft);
+    line-height:1.65;
+    margin:0 0 22px;
+  }
+
+  textarea, input[type=text], input[type=number]{
+    width:100%;
+    font-family:var(--sans);
+    font-size:0.95rem;
+    padding:11px 13px;
+    border:1px solid var(--line-soft);
+    background:var(--paper);
+    color:var(--ink);
+    border-radius:0;
+  }
+  textarea{
+    flex:1;
+    min-height:140px;
+    resize:vertical;
+    font-family:var(--mono);
+    font-size:0.88rem;
+    line-height:1.5;
+  }
+  textarea:focus, input:focus{ outline:none; border-color:var(--ink); }
+  textarea::placeholder, input::placeholder{ color:#A9A18A; }
+
+  .field{ margin-bottom:16px; }
+  .field label{
+    display:block;
+    font-family:var(--mono);
+    font-size:0.7rem;
+    letter-spacing:0.05em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    margin-bottom:8px;
+  }
+
+  .key-row{ display:flex; align-items:stretch; gap:0; margin-top:auto; padding-top:18px; }
+  .key-input-wrap{
+    position:relative;
+    flex:1;
+    background:var(--paper-raised);
+    border:1px solid var(--line);
+    border-right:none;
+    display:flex;
+    align-items:center;
+    padding:0 12px;
+  }
+  .key-input-wrap input{
+    border:none; background:none; padding:11px 0; flex:1;
+    font-family:var(--mono); font-size:0.92rem; letter-spacing:0.5px;
+  }
+  .key-input-wrap input:focus{ outline:none; }
+  .key-count{
+    font-family:var(--mono); font-size:0.72rem; color:var(--ink-soft);
+    white-space:nowrap; padding-left:8px;
+  }
+  .key-count.ok{ color:var(--ok); }
+  .use-example{
+    background:none; border:none; text-decoration:underline; text-underline-offset:2px;
+    color:var(--ink-soft); font-family:var(--mono); font-size:0.7rem; cursor:pointer; padding:0; margin-top:10px;
+  }
+  .use-example:hover{ color:var(--ink); }
+
+  button.action{
+    font-family:var(--mono);
+    font-size:0.82rem;
+    letter-spacing:0.04em;
+    text-transform:uppercase;
+    font-weight:700;
+    padding:0 22px;
+    background:var(--ink);
+    border:1px solid var(--line);
+    color:var(--paper);
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  button.action:hover:not(:disabled){ background:var(--signal); border-color:var(--signal); }
+  button.action:disabled{ background:var(--line-soft); border-color:var(--line-soft); color:var(--paper); cursor:not-allowed; }
+
+  .result-area{ flex:1; display:flex; flex-direction:column; }
+  .result-box{
+    font-family:var(--mono);
+    font-size:0.92rem;
+    line-height:1.6;
+    background:var(--paper-raised);
+    border:1px solid var(--line-soft);
+    padding:16px;
+    min-height:80px;
+    word-break:break-all;
+    white-space:pre-wrap;
+    color:#A9A18A;
+  }
+  .result-box.filled{ color:var(--ink); border-color:var(--line); }
+  .result-meta{ display:flex; justify-content:space-between; align-items:center; margin-top:12px; }
+  .key-order{ font-family:var(--mono); font-size:0.75rem; color:var(--ink-soft); }
+  .copy-btn{
+    background:none; border:1px solid var(--line-soft); font-family:var(--mono);
+    font-size:0.68rem; text-transform:uppercase; letter-spacing:0.04em;
+    padding:6px 10px; cursor:pointer; color:var(--ink-soft);
+  }
+  .copy-btn:hover{ border-color:var(--ink); color:var(--ink); }
+  .use-btn{
+    margin-top:16px; background:none; border:none; text-decoration:underline; text-underline-offset:2px;
+    color:var(--ink-soft); font-family:var(--mono); font-size:0.75rem; cursor:pointer; padding:0; align-self:flex-start;
+  }
+  .use-btn:hover{ color:var(--signal); }
+
+  .error-banner{
+    display:none; border:1px solid var(--signal); background:var(--signal-bg);
+    color:var(--signal); font-family:var(--mono); padding:11px 14px; font-size:0.8rem; margin-top:16px;
+  }
+  .error-banner.show{ display:block; }
+
+  /* ---------- security calc ---------- */
+  .calc-wrap{ max-width:520px; border-top:2px solid var(--line); padding-top:32px; }
+  .quick-fills{ display:flex; gap:0; flex-wrap:wrap; margin-top:12px; border:1px solid var(--line-soft); width:fit-content; }
+  .quick-fill{
+    background:none; border:none; border-right:1px solid var(--line-soft); font-family:var(--mono);
+    font-size:0.72rem; color:var(--ink-soft); padding:8px 12px; cursor:pointer;
+  }
+  .quick-fill:last-child{ border-right:none; }
+  .quick-fill:hover{ background:var(--paper-raised); color:var(--ink); }
+  .calc-btn-row{ margin-top:22px; }
+  .calc-result{ margin-top:36px; border:1px solid var(--line); padding:36px 28px; background:var(--paper-raised); }
+  .calc-result .label{ font-family:var(--mono); font-size:0.7rem; letter-spacing:0.06em; text-transform:uppercase; color:var(--ink-soft); margin-bottom:10px; }
+  .calc-result .big{ font-family:var(--mono); font-weight:700; font-size:2rem; color:var(--signal); word-break:break-word; }
+  .calc-result .note{ margin-top:14px; font-family:var(--sans); font-size:0.8rem; color:var(--ink-soft); line-height:1.6; }
+
+  footer{
+    border-top:2px solid var(--line);
+    padding:20px 0;
+    font-family:var(--mono);
+    font-size:0.72rem;
+    color:var(--ink-soft);
+  }
+  footer .wrap{ display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; }
+  footer .blink{ color:var(--signal); }
+
+  @media (max-width: 760px){
+    .panels{ grid-template-columns:1fr; }
+    .panel{ border-right:none; }
+    .hero h1{ font-size:2.1rem; }
+    .page-head h1{ font-size:1.9rem; }
+    .dir-title{ font-size:1rem; }
+  }
+
+  [data-view]{ display:none; }
+  [data-view].active{ display:block; }
+</style>
+<link rel="stylesheet" href="{{ url_for('static', filename='key-schedule.css') }}">
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap site-nav">
+    <button class="brand" data-link="/">DES Toolkit</button>
+    <nav class="tabs">
+      <button class="tab-btn" data-link="/encrypt">Encrypt</button>
+      <button class="tab-btn" data-link="/decrypt">Decrypt</button>
+      <button class="tab-btn" data-link="/key-schedule">Key Sched.</button>
+      <button class="tab-btn" data-link="/security">Security</button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ============ LANDING ============ -->
+  <section data-view="/">
+    <div class="hero">
+      <div class="binary-strip">01000100 01000101 01010011 &mdash; 56-BIT EFFECTIVE KEY &mdash; 16 ROUNDS &mdash; EST. 1977</div>
+      <h1>Understand DES,<br>one round at a time</h1>
+      <p class="sub">Encrypt, decrypt, and trace the key schedule of the Data Encryption Standard &mdash; block by block, bit by bit.</p>
+    </div>
+
+    <div class="nav-grid">
+      <button class="nav-card" data-link="/encrypt">
+        <span class="num">01</span>
+        <span class="title">Encrypt</span>
+        <span class="desc">Turn plaintext into a 64-bit ciphertext block</span>
+      </button>
+      <button class="nav-card" data-link="/decrypt">
+        <span class="num">02</span>
+        <span class="title">Decrypt</span>
+        <span class="desc">Recover the message with rounds reversed</span>
+      </button>
+      <button class="nav-card" data-link="/key-schedule">
+        <span class="num">03</span>
+        <span class="title">Key Schedule</span>
+        <span class="desc">Expand a 64-bit key into 16 round keys</span>
+      </button>
+      <button class="nav-card" data-link="/security">
+        <span class="num">04</span>
+        <span class="title">Security Calc.</span>
+        <span class="desc">Estimate a brute-force attack's duration</span>
+      </button>
+    </div>
+
+    <div class="fact-box">
+      <span class="fact-tag">Field note</span>
+      DES uses a 56-bit effective key &mdash; 2<sup>56</sup>, or about
+      <strong>72 quadrillion</strong> possible keys. That was secure in the 1970s, but modern
+      hardware can search the entire space in hours, which is why DES was retired in favor of AES.
+    </div>
+  </section>
+
+  <!-- ============ ENCRYPT ============ -->
+  <section data-view="/encrypt">
+    <div class="page-head">
+      <p class="tag">Tool 01</p>
+      <h1>Encrypt</h1>
+      <p>Enter your text and a 16-character hex key.</p>
+    </div>
+    <div class="panels">
+      <div class="panel">
+        <h2>INPUT / PLAINTEXT</h2>
+        <div class="field" style="flex:1; display:flex; flex-direction:column;">
+          <textarea id="enc-plaintext" placeholder="Type the message you want to encrypt..."></textarea>
+        </div>
+        <div class="key-row">
+          <div class="key-input-wrap">
+            <input type="text" id="enc-key" maxlength="16" placeholder="ENCRYPTION KEY" autocomplete="off">
+            <span class="key-count" id="enc-key-count">0/16</span>
+          </div>
+          <button class="action" id="enc-btn" disabled>Encrypt</button>
+        </div>
+        <button class="use-example" data-fill-key="enc-key">Use example key &rarr;</button>
+        <div class="error-banner" id="enc-error"></div>
+      </div>
+      <div class="panel">
+        <h2>OUTPUT / CIPHERTEXT</h2>
+        <p class="blurb">DES processes your message in 64-bit blocks through 16 rounds, applying a
+          different round key at each step, in order K1 through K16.</p>
+        <div class="result-area">
+          <div class="result-box" id="enc-result">Awaiting input&hellip;</div>
+          <div class="result-meta">
+            <span class="key-order" id="enc-key-order"></span>
+            <button class="copy-btn" id="enc-copy" style="display:none;">Copy</button>
+          </div>
+        </div>
+        <button class="use-btn" id="enc-use-in-decrypt" style="display:none;">Use this result in Decrypt &rarr;</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ DECRYPT ============ -->
+  <section data-view="/decrypt">
+    <div class="page-head">
+      <p class="tag">Tool 02</p>
+      <h1>Decrypt</h1>
+      <p>Enter your ciphertext and the matching 16-character hex key.</p>
+    </div>
+    <div class="panels">
+      <div class="panel">
+        <h2>INPUT / CIPHERTEXT</h2>
+        <div class="field" style="flex:1; display:flex; flex-direction:column;">
+          <textarea id="dec-ciphertext" placeholder="Paste the hex ciphertext you want to decrypt..."></textarea>
+        </div>
+        <div class="key-row">
+          <div class="key-input-wrap">
+            <input type="text" id="dec-key" maxlength="16" placeholder="DECRYPTION KEY" autocomplete="off">
+            <span class="key-count" id="dec-key-count">0/16</span>
+          </div>
+          <button class="action" id="dec-btn" disabled>Decrypt</button>
+        </div>
+        <button class="use-example" data-fill-key="dec-key">Use example key &rarr;</button>
+        <div class="error-banner" id="dec-error"></div>
+      </div>
+      <div class="panel">
+        <h2>OUTPUT / PLAINTEXT</h2>
+        <p class="blurb">Decryption reverses the same 16 rounds, applying the round keys in the
+          opposite order, K16 down to K1, to recover the original message.</p>
+        <div class="result-area">
+          <div class="result-box" id="dec-result">Awaiting input&hellip;</div>
+          <div class="result-meta">
+            <span class="key-order" id="dec-key-order"></span>
+            <button class="copy-btn" id="dec-copy" style="display:none;">Copy</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ KEY SCHEDULE ============ -->
+  <section data-view="/key-schedule">
+    <div class="page-head">
+      <p class="tag">Tool 03</p>
+      <h1>Key Schedule</h1>
+      <p>See how a single 64-bit key expands into 16 round keys.</p>
+    </div>
+
+  <section id="key-schedule" class="ks">
+
+    <div class="ks-form">
+      <label for="ks-input">DES key (16 hex characters)</label>
+      <div class="key-row" style="padding-top:0; max-width:480px;">
+        <div class="key-input-wrap">
+          <input type="text" id="ks-input" maxlength="16" placeholder="KEY" autocomplete="off" spellcheck="false" aria-describedby="ks-error">
+          <span class="key-count" id="ks-key-count">0/16</span>
+        </div>
+        <button class="action" id="ks-generate" type="button" disabled>Generate</button>
+      </div>
+      <button class="use-example" id="ks-sample" type="button" data-fill-key="ks-input">Use example key &rarr;</button>
+      <p id="ks-error" class="error" role="alert" hidden></p>
+    </div>
+
+    <div id="ks-stage" hidden>
+      <ol class="flow">
+        <li>
+          <h3>64-bit key</h3>
+          <p class="bits" id="ks-key64"></p>
+          <p class="note">Hex <code id="ks-key64-hex"></code>. The <i class="parity">amber</i> bit at the end of each byte is a parity bit; PC-1 discards them.</p>
+        </li>
+        <li class="arrow" aria-hidden="true">↓ PC-1 (drop 8 parity bits, permute)</li>
+        <li>
+          <h3>56-bit key</h3>
+          <p class="bits" id="ks-key56"></p>
+        </li>
+        <li class="arrow" aria-hidden="true">↓ split into two 28-bit halves</li>
+        <li class="halves">
+          <div><h3>C0</h3><p class="bits" id="ks-c0"></p></div>
+          <div><h3>D0</h3><p class="bits" id="ks-d0"></p></div>
+        </li>
+        <li class="arrow" aria-hidden="true">↓ left circular shifts (1 or 2 bits per round), then PC-2 (56 → 48 bits)</li>
+      </ol>
+
+      <div class="controls">
+        <button id="ks-prev" type="button">Previous round</button>
+        <button id="ks-next" type="button" class="primary">Next round</button>
+        <button id="ks-all" type="button">Show all 16</button>
+        <button id="ks-reset" type="button">Reset</button>
+        <span id="ks-progress" class="progress" aria-live="polite"></span>
+      </div>
+
+      <div class="scroll">
+        <table>
+          <thead>
+            <tr><th>Round</th><th>Shift</th><th>Cn (28 bits)</th><th>Dn (28 bits)</th><th>PC-2 → Kn (48 bits)</th><th>Kn hex</th></tr>
+          </thead>
+          <tbody id="ks-rounds"></tbody>
+        </table>
+      </div>
+      <p class="note">The <i class="ks-wrap">teal</i> bits are the ones rotated from the front to the back in that round.</p>
+
+      <h3>Round keys</h3>
+      <ul id="ks-keys" class="keys"></ul>
+    </div>
+  </section>
+  </section>
+
+  <!-- ============ SECURITY CALCULATOR ============ -->
+  <section data-view="/security">
+    <div class="page-head">
+      <p class="tag">Tool 04</p>
+      <h1>Security Calculator</h1>
+      <p>Estimate how long a brute-force attack on DES would take.</p>
+    </div>
+    <div class="calc-wrap">
+      <div class="field">
+        <label for="sec-speed">Attacker speed (keys guessed per second)</label>
+        <input type="number" id="sec-speed" min="1" step="1" placeholder="e.g. 1000000000">
+      </div>
+      <div class="quick-fills">
+        <button class="quick-fill" data-speed="1000000">1M / sec</button>
+        <button class="quick-fill" data-speed="1000000000">1B / sec</button>
+        <button class="quick-fill" data-speed="1000000000000">1T / sec</button>
+      </div>
+      <div class="error-banner" id="sec-error"></div>
+      <div class="calc-btn-row">
+        <button class="action" id="sec-btn" disabled style="width:100%; padding:14px 0;">Calculate</button>
+      </div>
+      <div class="calc-result" id="sec-result-wrap" style="display:none;">
+        <div class="label">Time to search full key space</div>
+        <div class="big" id="sec-result">&mdash;</div>
+        <div class="note">DES has a 56-bit effective key &mdash; 2<sup>56</sup>, or about 72 quadrillion
+          possible keys &mdash; so this is the time to try every key at the given speed.</div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>DES Toolkit &mdash; cryptography assignment</span>
+    <span class="blink">&#9679; key schedule active</span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  const EXAMPLE_KEY = "133457799BBCDFF1";
+  const HEX_RE = /^[0-9a-fA-F]+$/;
+
+  // ---------- routing ----------
+  const views = document.querySelectorAll('[data-view]');
+  const tabBtns = document.querySelectorAll('.tab-btn');
+
+  function normalizeRoute(hash){
+    let r = (hash || '').replace('#', '');
+    if (!r) r = '/';
+    const valid = ['/', '/encrypt', '/decrypt', '/key-schedule', '/security'];
+    return valid.includes(r) ? r : '/';
+  }
+
+  function render(){
+    const route = normalizeRoute(location.hash);
+    views.forEach(v => v.classList.toggle('active', v.getAttribute('data-view') === route));
+    tabBtns.forEach(b => b.classList.toggle('active', b.getAttribute('data-link') === route));
+    window.scrollTo(0,0);
+  }
+
+  document.querySelectorAll('[data-link]').forEach(el => {
+    el.addEventListener('click', () => { location.hash = el.getAttribute('data-link'); });
+  });
+  window.addEventListener('hashchange', render);
+  render();
+
+  // ---------- helpers ----------
+  function setupKeyField(inputId, countId, onValidityChange){
+    const input = document.getElementById(inputId);
+    const count = document.getElementById(countId);
+    function update(){
+      const v = input.value.toUpperCase();
+      if (v !== input.value) input.value = v;
+      const len = input.value.length;
+      count.textContent = len + '/16';
+      const valid = len === 16 && HEX_RE.test(input.value);
+      count.classList.toggle('ok', valid);
+      onValidityChange(valid);
+    }
+    input.addEventListener('input', update);
+    update();
+    return { update, get value(){ return input.value; } };
+  }
+
+  function showError(elId, message){
+    const el = document.getElementById(elId);
+    el.textContent = '\u2716 ' + message;
+    el.classList.add('show');
+  }
+  function hideError(elId){
+    document.getElementById(elId).classList.remove('show');
+  }
+
+  async function postJSON(url, body){
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    let data;
+    try{ data = await res.json(); }
+    catch(e){ throw new Error('Server returned an unexpected response.'); }
+    if (!res.ok){ throw new Error(data.error || 'Something went wrong.'); }
+    return data;
+  }
+
+  function copyText(text, btn){
+    navigator.clipboard.writeText(text).then(() => {
+      const original = btn.textContent;
+      btn.textContent = 'Copied';
+      setTimeout(() => { btn.textContent = original; }, 1200);
+    }).catch(() => {});
+  }
+
+  document.querySelectorAll('.use-example').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = document.getElementById(btn.getAttribute('data-fill-key'));
+      target.value = EXAMPLE_KEY;
+      target.dispatchEvent(new Event('input'));
+    });
+  });
+
+  // ---------- ENCRYPT ----------
+  (function(){
+    const plaintextEl = document.getElementById('enc-plaintext');
+    const btn = document.getElementById('enc-btn');
+    const resultBox = document.getElementById('enc-result');
+    const keyOrderEl = document.getElementById('enc-key-order');
+    const copyBtn = document.getElementById('enc-copy');
+    const useInDecryptBtn = document.getElementById('enc-use-in-decrypt');
+    let keyValid = false;
+
+    const keyField = setupKeyField('enc-key', 'enc-key-count', (valid) => { keyValid = valid; refreshBtn(); });
+    plaintextEl.addEventListener('input', refreshBtn);
+    function refreshBtn(){ btn.disabled = !(keyValid && plaintextEl.value.trim().length > 0); }
+
+    btn.addEventListener('click', async () => {
+      hideError('enc-error');
+      btn.disabled = true;
+      const original = btn.textContent;
+      btn.textContent = 'Encrypting\u2026';
+      try{
+        const data = await postJSON('/api/encrypt', { plaintext: plaintextEl.value, key: keyField.value });
+        resultBox.textContent = data.ciphertext;
+        resultBox.classList.add('filled');
+        keyOrderEl.textContent = data.key_order || '';
+        copyBtn.style.display = 'inline-block';
+        useInDecryptBtn.style.display = 'inline-block';
+        useInDecryptBtn.onclick = () => {
+          location.hash = '/decrypt';
+          setTimeout(() => {
+            const dCipher = document.getElementById('dec-ciphertext');
+            const dKey = document.getElementById('dec-key');
+            dCipher.value = data.ciphertext;
+            dKey.value = keyField.value;
+            dKey.dispatchEvent(new Event('input'));
+          }, 0);
+        };
+      }catch(e){ showError('enc-error', e.message); }
+      finally{ btn.textContent = original; refreshBtn(); }
+    });
+
+    copyBtn.addEventListener('click', () => copyText(resultBox.textContent, copyBtn));
+  })();
+
+  // ---------- DECRYPT ----------
+  (function(){
+    const ciphertextEl = document.getElementById('dec-ciphertext');
+    const btn = document.getElementById('dec-btn');
+    const resultBox = document.getElementById('dec-result');
+    const keyOrderEl = document.getElementById('dec-key-order');
+    const copyBtn = document.getElementById('dec-copy');
+    let keyValid = false;
+
+    const keyField = setupKeyField('dec-key', 'dec-key-count', (valid) => { keyValid = valid; refreshBtn(); });
+    ciphertextEl.addEventListener('input', refreshBtn);
+    function refreshBtn(){ btn.disabled = !(keyValid && ciphertextEl.value.trim().length > 0); }
+
+    btn.addEventListener('click', async () => {
+      hideError('dec-error');
+      btn.disabled = true;
+      const original = btn.textContent;
+      btn.textContent = 'Decrypting\u2026';
+      try{
+        const data = await postJSON('/api/decrypt', { ciphertext: ciphertextEl.value.trim(), key: keyField.value });
+        resultBox.textContent = data.plaintext;
+        resultBox.classList.add('filled');
+        keyOrderEl.textContent = data.key_order || '';
+        copyBtn.style.display = 'inline-block';
+      }catch(e){ showError('dec-error', e.message); }
+      finally{ btn.textContent = original; refreshBtn(); }
+    });
+
+    copyBtn.addEventListener('click', () => copyText(resultBox.textContent, copyBtn));
+  })();
+
+  // ---------- SECURITY CALCULATOR ----------
+  (function(){
+    const speedEl = document.getElementById('sec-speed');
+    const btn = document.getElementById('sec-btn');
+    const resultWrap = document.getElementById('sec-result-wrap');
+    const resultEl = document.getElementById('sec-result');
+
+    function refreshBtn(){
+      const v = speedEl.value;
+      btn.disabled = !(v && Number(v) > 0 && Number.isInteger(Number(v)));
+    }
+    speedEl.addEventListener('input', refreshBtn);
+    refreshBtn();
+
+    document.querySelectorAll('.quick-fill').forEach(qb => {
+      qb.addEventListener('click', () => { speedEl.value = qb.getAttribute('data-speed'); refreshBtn(); });
+    });
+
+    btn.addEventListener('click', async () => {
+      hideError('sec-error');
+      btn.disabled = true;
+      const original = btn.textContent;
+      btn.textContent = 'Calculating\u2026';
+      try{
+        const data = await postJSON('/api/security-calc', { keys_per_second: parseInt(speedEl.value, 10) });
+        resultEl.textContent = data.time_to_crack;
+        resultWrap.style.display = 'block';
+      }catch(e){ showError('sec-error', e.message); }
+      finally{ btn.textContent = original; refreshBtn(); }
+    });
+  })();
+
+})();
+</script>
+<script src="{{ url_for('static', filename='key-schedule.js') }}"></script>
+
+</body>
+</html>

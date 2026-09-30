@@ -34,11 +34,11 @@
       throw new Error('Could not reach the server. Is the Flask app running?');
     }
     if (!res.ok || body.error) throw new Error(body && body.error ? body.error : 'Server error ' + res.status + '.');
-    const okShape = Array.isArray(body.round_keys) && body.round_keys.length === 16 && /^[01]{48}$/.test(body.round_keys[0]) &&
+    const okShape = Array.isArray(body.round_keys_binary) && body.round_keys_binary.length === 16 && /^[01]{48}$/.test(body.round_keys_binary[0]) &&
       Array.isArray(body.c) && body.c.length === 17 && Array.isArray(body.d) && body.d.length === 17 &&
       Array.isArray(body.shifts) && /^[01]{64}$/.test(body.original_64) && /^[01]{56}$/.test(body.pc_1);
     if (!okShape) throw new Error('The server returned the key schedule in an unexpected format.');
-    return { keyBits: body.original_64, pc1: body.pc_1, C: body.c, D: body.d, shifts: body.shifts, roundKeys: body.round_keys };
+    return { keyBits: body.original_64, pc1: body.pc_1, C: body.c, D: body.d, shifts: body.shifts, roundKeys: body.round_keys_binary };
   }
 
   function validate(raw) {
@@ -59,7 +59,7 @@
     $('ks-d0').innerHTML = group(data.D[0], 7);
     $('ks-rounds').innerHTML = data.roundKeys.map((k, i) => {
       const n = data.shifts[i];
-      const wrap = (bits) => bits.slice(0, 28 - n) + '<i class="wrap">' + bits.slice(28 - n) + '</i>';
+      const wrap = (bits) => bits.slice(0, 28 - n) + '<i class="ks-wrap">' + bits.slice(28 - n) + '</i>';
       return '<tr id="ks-row-' + (i + 1) + '" hidden>' +
         '<th scope="row">' + (i + 1) + '</th>' +
         '<td>' + n + '</td>' +
@@ -117,9 +117,20 @@
 
   function init() {
     if (!$('key-schedule')) return;
-    $('ks-generate').addEventListener('click', generate);
+    const input = $('ks-input'), count = $('ks-key-count'), btn = $('ks-generate');
+    function sync() {
+      const v = input.value.toUpperCase();
+      if (v !== input.value) input.value = v;
+      const ok = v.length === 16 && /^[0-9A-F]+$/.test(v);
+      count.textContent = v.length + '/16';
+      count.classList.toggle('ok', ok);
+      btn.disabled = !ok;
+    }
+    input.addEventListener('input', sync);
+    sync();
+    btn.addEventListener('click', generate);
     $('ks-input').addEventListener('keydown', (e) => { if (e.key === 'Enter') generate(); });
-    $('ks-sample').addEventListener('click', () => { $('ks-input').value = SAMPLE_KEY; generate(); });
+    $('ks-sample').addEventListener('click', () => { input.value = SAMPLE_KEY; sync(); generate(); });
     $('ks-prev').addEventListener('click', () => { if (data && shown > 0) { shown--; update(); } });
     $('ks-next').addEventListener('click', () => { if (data && shown < 16) { shown++; update(); } });
     $('ks-all').addEventListener('click', () => { if (data) { shown = 16; update(); } });

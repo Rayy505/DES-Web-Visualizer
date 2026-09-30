@@ -7,14 +7,6 @@
 .ks .lead { margin: 0 0 20px; color: var(--muted); max-width: 70ch; }
 
 .ks label { display: block; font-weight: 600; margin-bottom: 6px; }
-.ks-row { display: flex; flex-wrap: wrap; gap: 8px; }
-.ks input[type=text] { flex: 1 1 260px; min-width: 0; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px;
-  font: 1rem ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; letter-spacing: .04em; background: #fff; color: var(--ink); }
-.ks button { padding: 10px 14px; border: 1px solid var(--line); border-radius: 8px; background: #fff; color: var(--ink); font: inherit; cursor: pointer; }
-.ks button:hover:not(:disabled) { border-color: var(--accent); }
-.ks button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
-.ks button:disabled { opacity: .45; cursor: not-allowed; }
-.ks button:focus-visible, .ks input:focus-visible { outline: 3px solid #9aa5f0; outline-offset: 2px; }
 .ks .error { margin: 10px 0 0; padding: 10px 12px; border-left: 4px solid var(--err); background: #fde8e6; color: var(--err); border-radius: 4px; }
 
 .ks .bits, .ks table td.bits, .ks .hex, .ks code, .ks .keys code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
@@ -22,7 +14,7 @@
 .ks .grp { display: inline-block; margin: 0 8px 4px 0; }
 .ks i { font-style: normal; border-radius: 3px; padding: 0 1px; }
 .ks i.parity { background: var(--parity-bg); color: var(--parity-fg); font-weight: 700; }
-.ks i.wrap { background: var(--wrap-bg); color: var(--wrap-fg); font-weight: 700; }
+.ks i.ks-wrap { background: var(--wrap-bg); color: var(--wrap-fg); font-weight: 700; }
 
 .ks .flow { list-style: none; margin: 24px 0 8px; padding: 0; }
 .ks .flow > li:not(.arrow) { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
@@ -49,3 +41,26 @@
 @media (max-width: 640px) { .ks .halves { grid-template-columns: 1fr; } }
 @media (prefers-reduced-motion: no-preference) { .ks tbody tr, .ks .keys li { animation: ksin .2s ease-out; } }
 @keyframes ksin { from { opacity: 0; } to { opacity: 1; } }
+
+/* ---- Theme: match the DES Toolkit look (paper / ink / red signal) ---- */
+.ks { --ink: #1B1A16; --muted: #6B6759; --line: #C9C2AC; --accent: #B7291F; --card: #F6F3EA; --err: #B7291F;
+      --mono: ui-monospace, 'IBM Plex Mono', SFMono-Regular, Menlo, Consolas, monospace; }
+.ks .flow > li:not(.arrow), .ks .scroll, .ks .keys li, .ks .error { border-radius: 0; }
+.ks .error { background: #F1E1DD; border-left-color: var(--accent); font-family: var(--mono); font-size: .8rem; }
+.ks thead th, .ks tbody tr.current { background: #EDE8D8; }
+.ks label, .ks h3 { font-family: var(--mono); text-transform: uppercase; font-size: .75rem; letter-spacing: .05em; }
+.ks-form { margin-bottom: 8px; }
+
+/* Round controls only (Generate / example key use the site's .action / .use-example classes) */
+.ks .controls button { font-family: var(--mono); font-size: .72rem; letter-spacing: .04em; text-transform: uppercase;
+  padding: 9px 14px; border: 1px solid var(--line); border-radius: 0; background: none; color: var(--muted); cursor: pointer; }
+.ks .controls button:hover:not(:disabled) { border-color: var(--ink); color: var(--ink); }
+.ks .controls button.primary { font-size: .82rem; font-weight: 700; padding: 11px 22px; background: var(--ink); border-color: var(--ink); color: #F6F3EA; }
+.ks .controls button.primary:hover:not(:disabled) { background: var(--accent); border-color: var(--accent); color: #F6F3EA; }
+.ks .controls button:disabled { opacity: 1; cursor: not-allowed; }
+.ks .controls button.primary:disabled { background: var(--line); border-color: var(--line); color: #F6F3EA; }
+.ks .controls button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+/* Previous / Next joined into one segmented control */
+.ks #ks-prev { border-right: none; }
+.ks #ks-next { margin-left: -8px; }
