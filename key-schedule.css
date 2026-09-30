@@ -1,0 +1,51 @@
+/* Key Schedule Visualizer styles. Everything is scoped under .ks to avoid clashing with team CSS. */
+
+.ks { --ink: #1d2433; --muted: #5a6478; --line: #d8dce5; --accent: #2f3fbf; --card: #fff;
+      --parity-fg: #92400e; --parity-bg: #fde9b8; --wrap-fg: #0b6b62; --wrap-bg: #c9f2ea; --err: #b42318; }
+.ks h2 { margin: 0 0 4px; font-size: 1.75rem; }
+.ks h3 { margin: 0 0 6px; font-size: 1.05rem; }
+.ks .lead { margin: 0 0 20px; color: var(--muted); max-width: 70ch; }
+
+.ks label { display: block; font-weight: 600; margin-bottom: 6px; }
+.ks-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.ks input[type=text] { flex: 1 1 260px; min-width: 0; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px;
+  font: 1rem ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; letter-spacing: .04em; background: #fff; color: var(--ink); }
+.ks button { padding: 10px 14px; border: 1px solid var(--line); border-radius: 8px; background: #fff; color: var(--ink); font: inherit; cursor: pointer; }
+.ks button:hover:not(:disabled) { border-color: var(--accent); }
+.ks button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.ks button:disabled { opacity: .45; cursor: not-allowed; }
+.ks button:focus-visible, .ks input:focus-visible { outline: 3px solid #9aa5f0; outline-offset: 2px; }
+.ks .error { margin: 10px 0 0; padding: 10px 12px; border-left: 4px solid var(--err); background: #fde8e6; color: var(--err); border-radius: 4px; }
+
+.ks .bits, .ks table td.bits, .ks .hex, .ks code, .ks .keys code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+.ks .bits { margin: 0; word-break: break-all; }
+.ks .grp { display: inline-block; margin: 0 8px 4px 0; }
+.ks i { font-style: normal; border-radius: 3px; padding: 0 1px; }
+.ks i.parity { background: var(--parity-bg); color: var(--parity-fg); font-weight: 700; }
+.ks i.wrap { background: var(--wrap-bg); color: var(--wrap-fg); font-weight: 700; }
+
+.ks .flow { list-style: none; margin: 24px 0 8px; padding: 0; }
+.ks .flow > li:not(.arrow) { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+.ks .flow .arrow { color: var(--accent); font-weight: 600; padding: 8px 0 8px 16px; }
+.ks .halves { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.ks .note { margin: 8px 0 0; color: var(--muted); font-size: .9rem; }
+
+.ks .controls { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 20px 0 12px; }
+.ks .progress { color: var(--muted); margin-left: 6px; }
+
+.ks .scroll { overflow-x: auto; background: var(--card); border: 1px solid var(--line); border-radius: 10px; }
+.ks table { border-collapse: collapse; width: 100%; min-width: 860px; font-size: .9rem; }
+.ks th, .ks td { padding: 8px 10px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+.ks thead th { background: #eef0f6; font-weight: 600; }
+.ks tbody tr.current { background: #eef1ff; box-shadow: inset 4px 0 0 var(--accent); }
+.ks td .grp { margin-right: 6px; }
+.ks td.hex { font-weight: 700; }
+
+.ks .keys { list-style: none; margin: 8px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 8px; }
+.ks .keys li { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; display: flex; gap: 10px; align-items: baseline; }
+.ks .keys li[hidden], .ks tr[hidden] { display: none; }
+.ks .keys b { color: var(--accent); min-width: 2.4em; }
+
+@media (max-width: 640px) { .ks .halves { grid-template-columns: 1fr; } }
+@media (prefers-reduced-motion: no-preference) { .ks tbody tr, .ks .keys li { animation: ksin .2s ease-out; } }
+@keyframes ksin { from { opacity: 0; } to { opacity: 1; } }
