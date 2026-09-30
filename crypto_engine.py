@@ -60,9 +60,7 @@ def get_key_schedule(key):
         "c": c,
         "d": d,
         "shifts": list(_KS_SHIFTS),
-        # Pass the nicely formatted HEX keys to the variable the UI is looking for
         "round_keys": [format(int(k, 2), "012X") for k in round_keys], 
-        # (Optional) Keep the binary version under a different name if needed for debugging
         "round_keys_binary": round_keys, 
     }
 # ===== KEY SCHEDULE (Pana) END =====
